@@ -1,9 +1,6 @@
-from PIL import ImageGrab
-
-
 class NaiveBot:
     def __init__(self):
-        self.__x1, self.__x2, self.__y1, self.__y2 = 540, 660, 600, 680
+        self.__x1, self.__x2, self.__y1, self.__y2 = 54, 66, 58, 66
 
     def __detect_enemy(self, scene):
         aux_color = scene.getpixel((int(self.__x1), self.__y1))
@@ -14,13 +11,6 @@ class NaiveBot:
                     return True
         return False
 
-    def __update_strategy(self):
-        self.__x1 += 0.6
-        self.__x2 += 0.6
-
     def run(self, state):
         is_enemy = self.__detect_enemy(state)
-        if is_enemy:
-            return 1
-        else:
-            return 0
+        return 1 if is_enemy else 0

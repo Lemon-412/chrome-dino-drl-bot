@@ -1,8 +1,7 @@
 import pyautogui
 from PIL import ImageGrab
-from copy import deepcopy
 
-SCREEEN_RESIZE = tuple([1920, 1080])
+SCREEEN_RESIZE = tuple([192, 108])
 
 
 class ChromeDino:
@@ -20,17 +19,10 @@ class ChromeDino:
 
     def get_state(self):
         screen = ImageGrab.grab().resize(SCREEEN_RESIZE).convert("L")
-        # print(screen)
-        # print("==============")
-        # print(self.__prev_score)
-        # print("=============")
-        # print(screen == self.__prev_score)
-        # print(screen is self.__prev_score)
-        # input()
         if screen == self.__prev_score:
             self.__is_reset = False
         else:
-            self.__prev_score = deepcopy(screen)
+            self.__prev_score = screen
         return self.__prev_score
 
     def step(self, action):

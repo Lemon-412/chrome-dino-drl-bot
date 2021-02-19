@@ -7,6 +7,10 @@ class CartPole:
         self.__is_over = True
         self.__prev_state = None
 
+    @staticmethod
+    def get_dim():
+        return 4, 2
+
     def is_over(self):
         return self.__is_over
 

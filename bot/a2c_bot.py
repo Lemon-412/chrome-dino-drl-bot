@@ -47,7 +47,6 @@ class ActorNetwork(nn.Module):
         self.fc1 = nn.Linear(state_dim, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, output_size)
-        # activation function for the output
         self.output_act = output_act
 
     def __call__(self, state):
@@ -74,7 +73,7 @@ class CriticNetwork(nn.Module):
 
 class A2CBot:
     def __init__(self, state_dim, action_dim,
-                 actor_hidden_size=32, critic_hidden_size=32,
+                 actor_hidden_size=128, critic_hidden_size=128,
                  actor_output_act=nn.functional.log_softmax, critic_loss="mse",
                  actor_lr=0.001, critic_lr=0.001,
                  optimizer_type="rmsprop", entropy_reg=0.01,

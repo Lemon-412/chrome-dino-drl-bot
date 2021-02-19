@@ -1,12 +1,12 @@
 from env.chrome_dino import ChromeDino
+from env.chrome_dino_simulator import ChromeDinoSimulator
 from env.cart_pole import CartPole
 from bot.naive_bot import NaiveBot
 from bot.a2c_bot import A2CBot
-
+from utils.utils import ReplayMemory, discount_reward, agg_double_list
 import numpy as np
 from time import time, sleep
-from collections import namedtuple
-from random import sample
+
 
 MAX_EPISODES = 10000
 EPISODES_BEFORE_TRAIN = 0
@@ -23,61 +23,6 @@ MAX_GRAD_NORM = None
 EPSILON_START = 0.99
 EPSILON_END = 0.05
 EPSILON_DECAY = 500
-
-
-class ReplayMemory(object):
-    """
-    Replay memory buffer
-    """
-
-    def __init__(self, capacity):
-        self.capacity = capacity
-        self.memory = []
-        self.position = 0
-        self.experience = namedtuple("Experience", ("states", "actions", "rewards", "next_states", "dones"))
-
-    def _push_one(self, state, action, reward, next_state=None, done=None):
-        if len(self.memory) < self.capacity:
-            self.memory.append(None)
-        self.memory[self.position] = self.experience(state, action, reward, next_state, done)
-        self.position = (self.position + 1) % self.capacity
-
-    def push(self, states, actions, rewards, next_states=None, dones=None):
-        if isinstance(states, list):
-            if next_states is not None and len(next_states) > 0:
-                for s, a, r, n_s, d in zip(states, actions, rewards, next_states, dones):
-                    self._push_one(s, a, r, n_s, d)
-            else:
-                for s, a, r in zip(states, actions, rewards):
-                    self._push_one(s, a, r)
-        else:
-            self._push_one(states, actions, rewards, next_states, dones)
-
-    def sample(self, batch_size):
-        if batch_size > len(self.memory):
-            batch_size = len(self.memory)
-        transitions = sample(self.memory, batch_size)
-        batch = self.experience(*zip(*transitions))
-        return batch
-
-    def __len__(self):
-        return len(self.memory)
-
-
-def discount_reward(rewards, remain_value):
-    discounted_r = np.zeros_like(rewards)
-    running_add = remain_value
-    for t in reversed(range(0, len(rewards))):
-        running_add = running_add * REWARD_DISCOUNTED_GAMMA + rewards[t]
-        discounted_r[t] = running_add
-    return discounted_r
-
-
-def agg_double_list(l):
-    s = [np.sum(np.array(l_i), 0) for l_i in l]
-    s_mu = np.mean(np.array(s), 0)
-    s_std = np.std(np.array(s), 0)
-    return s_mu, s_std
 
 
 def naive_main():
@@ -108,8 +53,8 @@ def naive_main():
 
 
 def a2c_main():
-    env = ChromeDino()
-    state_dim, action_dim = 4440, 2
+    env = CartPole()
+    state_dim, action_dim = env.get_dim()
     bot = A2CBot(
         state_dim=state_dim, action_dim=action_dim,
         entropy_reg=ENTROPY_REG, max_grad_norm=MAX_GRAD_NORM,
@@ -123,7 +68,7 @@ def a2c_main():
     while episode < MAX_EPISODES:
         total_reward = 0
         env.reset()
-        sleep(1)
+        # sleep(1)
         while not env.is_over():
             states, actions, rewards = [], [], []
             epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * np.exp(-1 * n_step_cnt / EPSILON_DECAY)
@@ -135,14 +80,14 @@ def a2c_main():
                 else:
                     action = bot.action(state)
                 actions.append(action)
-                reward = -500 if env.is_over() else env.step(action)
+                reward = -15 if env.is_over() else env.step(action)
                 rewards.append(reward)
                 total_reward += reward
                 if env.is_over():
                     break
             n_step_cnt += 1
             remain_value = 0 if env.is_over() else bot.value(env.get_state(), bot.action(env.get_state()))
-            rewards = discount_reward(rewards, remain_value)
+            rewards = discount_reward(rewards, remain_value, REWARD_DISCOUNTED_GAMMA)
             replay_memory.push(states, actions, rewards)
             if episode >= EPISODES_BEFORE_TRAIN:
                 batch = replay_memory.sample(BATCH_SIZE)
@@ -151,11 +96,11 @@ def a2c_main():
         episode += 1
         if episode % EVAL_INTERVAL == 0:
             rewards = []
-            sleep(1)
+            # sleep(1)
             print(f"\nEvaluation Start...")
             for i in range(EVAL_EPISODES):
                 env.reset()
-                sleep(1)
+                # sleep(1)
                 total_reward = 0
                 rewards_i = []
                 while True:
@@ -171,14 +116,51 @@ def a2c_main():
                         print("\n", end="", flush=True)
                 rewards.append(rewards_i)
                 print(f"\nEvaluation episode {i}, score={total_reward}")
-                sleep(1)
+                # sleep(1)
             rewards_mu, rewards_std = agg_double_list(rewards)
+            print("=" * 100)
             print(f"Episode {episode}, Average Reward {round(float(rewards_mu), 2)}")
-            sleep(10)
+            print("=" * 100)
+            # sleep(10)
             epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * np.exp(-1 * n_step_cnt / EPSILON_DECAY)
             print(f"Training Start... epsilon={round(epsilon, 5)}")
-        sleep(1)
+        # sleep(1)
 
 
 if __name__ == '__main__':
-    naive_main()
+    # env = ChromeDino()
+    # ret = env.get_state()
+    # for i in range(10, 17):
+    #     for j in range(1, 47):
+    #         print(ret[(i - 10) * 46 + j - 1], end="")
+    #     print()
+    # input()
+    # a2c_main()
+    # naive_main()
+
+    # env = ChromeDino()
+    # while True:
+    #     ret = env.get_state()
+    #     for i in range(10, 17):
+    #         for j in range(1, 47):
+    #             print(ret[(i - 10) * 46 + j - 1], end="")
+    #         print()
+    #     print()
+
+    # env = ChromeDinoSimulator()
+    # while True:
+    #     total_reward = 0
+    #     env.reset()
+    #     while True:
+    #         ret = env.get_state()
+    #         if env.is_over():
+    #             break
+    #         for i in range(10, 17):
+    #             for j in range(1, 47):
+    #                 print(ret[(i - 10) * 46 + j - 1], end="")
+    #             print()
+    #         print()
+    #         action = int(input("action:\n"))
+    #         total_reward += env.step(action)
+    #     print(f"episode end: reward={total_reward}")
+    pass

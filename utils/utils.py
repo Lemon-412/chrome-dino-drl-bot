@@ -4,10 +4,6 @@ import numpy as np
 
 
 class ReplayMemory(object):
-    """
-    Replay memory buffer
-    """
-
     def __init__(self, capacity):
         self.capacity = capacity
         self.memory = []

@@ -23,10 +23,11 @@ EPSILON_DECAY = 1000
 def a2c_bot_dino_simulator_main():
     env = ChromeDinoSimulator()
     state_dim, action_dim = env.get_dim()
+    state_dim *= 2
     bot = A2CBot(
         state_dim=state_dim, action_dim=action_dim,
         entropy_reg=ENTROPY_REG, max_grad_norm=MAX_GRAD_NORM,
-        actor_hidden_size=512, critic_hidden_size=512,
+        actor_hidden_size=256, critic_hidden_size=256,
         actor_lr=2e-3, critic_lr=2e-3,
         critic_loss=CRITIC_LOSS, optimizer_type="rmsprop"
     )
@@ -36,24 +37,29 @@ def a2c_bot_dino_simulator_main():
     while episode < MAX_EPISODES:
         total_reward = 0
         env.reset()
+        pre_state = None
         while not env.is_over():
             states, actions, rewards = [], [], []
             epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * np.exp(-1 * n_step_cnt / EPSILON_DECAY)
             for i in range(ROLL_OUT_N_STEPS):
                 state = env.get_state()
-                states.append(state)
+                if pre_state is None:
+                    pre_state = state
+                states.append(np.hstack((pre_state, state)))
                 if np.random.rand() < epsilon:
                     action = np.random.choice(action_dim)
                 else:
-                    action = bot.action(state)
+                    action = bot.action(np.hstack((pre_state, state)))
                 actions.append(action)
+                pre_state = state
                 reward = -15 if env.is_over() else env.step(action)
                 rewards.append(reward)
                 total_reward += reward
                 if env.is_over():
                     break
             n_step_cnt += 1
-            remain_value = 0 if env.is_over() else bot.value(env.get_state(), bot.action(env.get_state()))
+            tmp = np.hstack((pre_state, env.get_state()))
+            remain_value = 0 if env.is_over() else bot.value(tmp, bot.action(tmp))
             rewards = discount_reward(rewards, remain_value, REWARD_DISCOUNTED_GAMMA)
             replay_memory.push(states, actions, rewards)
             if episode >= EPISODES_BEFORE_TRAIN:
@@ -64,13 +70,16 @@ def a2c_bot_dino_simulator_main():
             rewards = []
             for i in range(EVAL_EPISODES):
                 env.reset()
+                pre_state = None
                 total_reward = 0
                 rewards_i = []
                 while True:
                     state = env.get_state()
+                    if pre_state is None:
+                        pre_state = state
                     if env.is_over():
                         break
-                    action = bot.action(state)
+                    action = bot.action(np.hstack((pre_state, state)))
                     reward = env.step(action)
                     total_reward += reward
                     rewards_i.append(reward)

@@ -39,7 +39,7 @@ class ReplayMemory(object):
 
 
 def discount_reward(rewards, remain_value, reward_discounted_gamma):
-    discounted_r = np.zeros_like(rewards)
+    discounted_r = [0.0 for _ in range(len(rewards))]
     running_add = remain_value
     for t in reversed(range(0, len(rewards))):
         running_add = running_add * reward_discounted_gamma + rewards[t]

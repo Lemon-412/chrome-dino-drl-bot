@@ -97,10 +97,10 @@ class A2CBot:
         elif self.optimizer_type == "rmsprop":
             self.actor_optimizer = RMSprop(self.actor.parameters(), lr=self.actor_lr)
             self.critic_optimizer = RMSprop(self.critic.parameters(), lr=self.critic_lr)
-        print("=" * 100)
+        print("=" * 50)
         for x, y in locals().items():
             print(f"{x} -> {y}")
-        print("=" * 100)
+        print("=" * 50)
 
     # train on a roll out batch
     def train(self, batch):

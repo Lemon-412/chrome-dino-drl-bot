@@ -1,6 +1,7 @@
 import pyautogui
 from PIL import ImageGrab
 import numpy as np
+from time import sleep
 
 SCREEN_RESIZE = tuple([48, 27])
 CUT_RESIZE = tuple([1, 10, 47, 17])
@@ -48,3 +49,16 @@ class ChromeDino:
         if action == 1:
             pyautogui.press("up")
         return 1
+
+
+if __name__ == '__main__':
+    env = ChromeDino()
+    print("Environment test starts in 3 seconds...")
+    sleep(3)
+    while True:
+        ret = env.get_state()
+        for i in range(10, 17):
+            for j in range(1, 47):
+                print(ret[(i - 10) * 46 + j - 1], end="")
+            print()
+        print()

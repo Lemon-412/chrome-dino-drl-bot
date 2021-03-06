@@ -121,31 +121,4 @@ if __name__ == '__main__':
         print()
     sleep(5)
     a2c_main()
-    # naive_main()
 
-    # env = ChromeDino()
-    # while True:
-    #     ret = env.get_state()
-    #     for i in range(10, 17):
-    #         for j in range(1, 47):
-    #             print(ret[(i - 10) * 46 + j - 1], end="")
-    #         print()
-    #     print()
-
-    # env = ChromeDinoSimulator()
-    # while True:
-    #     total_reward = 0
-    #     env.reset()
-    #     while True:
-    #         ret = env.get_state()
-    #         if env.is_over():
-    #             break
-    #         for i in range(10, 17):
-    #             for j in range(1, 47):
-    #                 print(ret[(i - 10) * 46 + j - 1], end="")
-    #             print()
-    #         print()
-    #         action = int(input("action:\n"))
-    #         total_reward += env.step(action)
-    #     print(f"episode end: reward={total_reward}")
-    # a2c_main()

@@ -309,3 +309,22 @@ class ChromeDinoSimulator:
             self.__obstacles.append({"pos": self.__size[1], "tree": Tree()})
         self.__paint_obstacles()
         return 1
+
+
+if __name__ == '__main__':
+    env = ChromeDinoSimulator()
+    while True:
+        total_reward = 0
+        env.reset()
+        while True:
+            ret = env.get_state()
+            if env.is_over():
+                break
+            for i in range(10, 17):
+                for j in range(1, 47):
+                    print(ret[(i - 10) * 46 + j - 1], end="")
+                print()
+            print()
+            action = int(input("action: "))
+            total_reward += env.step(action)
+        print(f"episode end: reward={total_reward}\n")

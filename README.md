@@ -38,8 +38,9 @@
 
 1. 使用 chrome 浏览器访问链接 [chrome://dino](chrome://dino)
 2. 保持鼠标始终聚焦在浏览器上
+3. 运行`env/chrome_dino.py` 调整游戏图像到合适的位置
 
-如果不想修改相应截图坐标，应使用 2k 分辨率显示器，保持网页处于全屏状态，并使用深色 chrome 主题。
+在使用 2k 分辨率显示器，保持网页处于全屏状态，并使用深色 chrome 主题时可以不调整图像位置。
 
 
 
@@ -49,7 +50,7 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 
 将 t 时刻和 t-1 时刻的游戏画面截取合适的部分二值化后降低分辨率再 flatten 后拼接作为 state。
 
-
+<img src="/imgs/state.png"> </img>
 
 ### 难点
 
@@ -69,6 +70,8 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 运气不好时可能根本炼不出来 QwQ。
 
 实现的不好，调参调到自闭。强化学习没前途的，快跑！
+
+<img src="/imgs/A2C_Implementation_on_Chrome_Dino_Game.png"> </img>
 
 
 

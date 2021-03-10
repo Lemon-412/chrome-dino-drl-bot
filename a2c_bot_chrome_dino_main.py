@@ -3,7 +3,7 @@ from bot.a2c_bot import A2CBot
 from utils.utils import ReplayMemory, discount_reward, agg_double_list
 import numpy as np
 from time import time, sleep
-
+from os import makedirs
 
 MAX_EPISODES = 1000
 EPISODES_BEFORE_TRAIN = 0
@@ -26,6 +26,7 @@ def a2c_main():
     env = ChromeDino()
     state_dim, action_dim = env.get_dim()
     state_dim *= 2
+
     bot = A2CBot(
         state_dim=state_dim, action_dim=action_dim,
         entropy_reg=ENTROPY_REG, max_grad_norm=MAX_GRAD_NORM,
@@ -36,6 +37,8 @@ def a2c_main():
     replay_memory = ReplayMemory(MEMORY_CAPACITY)
     episode = 0
     n_step_cnt = 0
+    path = "./models/" + str(int(time()))
+
     print(f"time: {time()} a2c solution for chrome://dino")
     print("Game will start in 3 seconds...")
     sleep(3)
@@ -68,11 +71,11 @@ def a2c_main():
             compressed_state = np.hstack((pre_state, env.get_state()))
             remain_value = 0 if env.is_over() else float(bot.value(compressed_state, bot.action(compressed_state)))
             rewards = discount_reward(rewards, remain_value, REWARD_DISCOUNTED_GAMMA)
-            print(f" (remain={round(remain_value, 1)}) ==> {[round(x, 1) for x in rewards]}")
             replay_memory.push(states, actions, rewards)
             if episode >= EPISODES_BEFORE_TRAIN:
                 batch = replay_memory.sample(BATCH_SIZE)
-                bot.train(batch)
+                loss = bot.train(batch)
+                print(f" (remain={round(remain_value, 1)} actor_loss={round(loss[0], 3)}, critic_loss={round(loss[1], 3)}) ==> {[round(x, 1) for x in rewards]}")
         print(f"eisode {episode} total_reward: {total_reward}\n")
         # print(f"{episode % 10 if episode % 10 != 0 else episode % 100 // 10}", end="", flush=True)
         episode += 1
@@ -106,6 +109,9 @@ def a2c_main():
             print("=" * 100)
             print(f"Episode {episode}, Average Reward {round(float(rewards_mu), 2)}")
             print("=" * 100)
+            file_name = f"/Episode_{episode}_Reward_{round(float(rewards_mu), 2)}"
+            makedirs(path + file_name)
+            bot.save_model(path + file_name)
             sleep(1)
             epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * np.exp(-1 * n_step_cnt / EPSILON_DECAY)
             print(f"Training Start... epsilon={round(epsilon, 5)}")
@@ -121,4 +127,3 @@ if __name__ == '__main__':
         print()
     sleep(5)
     a2c_main()
-

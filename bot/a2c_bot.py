@@ -102,12 +102,21 @@ class A2CBot:
             print(f"{x} -> {y}")
         print("=" * 50)
 
+    def save_model(self, path_name):
+        th.save(self.actor, path_name + "/actor.pkl")
+        th.save(self.critic, path_name + "/critic.pkl")
+
+    def load_model(self, path_name):
+        self.actor = th.load(path_name + "/actor.pkl")
+        self.critic = th.load(path_name + "/critic.pkl")
+
     # train on a roll out batch
     def train(self, batch):
         states_var = to_tensor_var(batch.states).view(-1, self.state_dim)
         one_hot_actions = index_to_one_hot(batch.actions, self.action_dim)
         actions_var = to_tensor_var(one_hot_actions).view(-1, self.action_dim)
         rewards_var = to_tensor_var(batch.rewards).view(-1, 1)
+        loss = [None, None]
 
         # update actor network
         self.actor_optimizer.zero_grad()
@@ -118,6 +127,10 @@ class A2CBot:
         advantages = rewards_var - values.detach()
         pg_loss = -th.mean(action_log_probs * advantages)
         actor_loss = pg_loss - entropy_loss * self.entropy_reg
+        loss[0] = float(actor_loss)
+        if actor_loss != actor_loss:
+            print(f"got invalid actor loss:{actor_loss} = {pg_loss} - {entropy_loss} * {self.entropy_reg}")
+            actor_loss.data = th.tensor(0.0)
         actor_loss.backward()
         if self.max_grad_norm is not None:
             nn.utils.clip_grad_norm(self.actor.parameters(), self.max_grad_norm)
@@ -130,10 +143,15 @@ class A2CBot:
             critic_loss = nn.functional.smooth_l1_loss(values, target_values)
         else:
             critic_loss = nn.MSELoss()(values, target_values)
+        loss[1] = float(critic_loss)
+        if critic_loss != critic_loss:
+            print(f"got invalid critic loss:{critic_loss}")
+            critic_loss.data = th.tensor(0.0)
         critic_loss.backward()
         if self.max_grad_norm is not None:
             nn.utils.clip_grad_norm(self.critic.parameters(), self.max_grad_norm)
         self.critic_optimizer.step()
+        return loss
 
     # predict softmax action based on state
     def _softmax_action(self, state):

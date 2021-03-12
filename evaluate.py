@@ -39,10 +39,10 @@ if __name__ == '__main__':
         print()
     sleep(5)
 
-    bot.load_model("./models/1615308927/Episode_220_Reward_431.4")
+    bot.load_model("./models/1615433372/Episode_540_Reward_470.8")
     print(f"Evaluation Start...")
 
-    for episode in range(500):
+    for episode in range(50):
         rewards = []
         sleep(1)
         env.reset()
@@ -60,9 +60,9 @@ if __name__ == '__main__':
             reward = env.step(action)
             total_reward += reward
             rewards_i.append(reward)
-            print(f"{'.!'[action]}", end="", flush=True)
-            if total_reward % 100 == 0:
-                print("\n", end="", flush=True)
+            # print(f"{'.!'[action]}", end="", flush=True)
+            # if total_reward % 100 == 0:
+            #     print("\n", end="", flush=True)
         rewards.append(rewards_i)
-        print(f"\nEvaluation episode {episode}, score={total_reward}")
+        print(f"Evaluation episode {episode}, score={total_reward}")
         sleep(1)

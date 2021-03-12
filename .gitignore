@@ -5,3 +5,4 @@ __pycache__
 debug.pptx
 ~$debug.pptx
 models/*
+!models/pretrained models

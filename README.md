@@ -3,7 +3,9 @@
 
 基于 A2C 的 chrome 小恐龙彩蛋 解决方案，用于学习强化学习。
 
-本项目完全没有参考价值，如有需求请移步：[Lumotheninja/dino-reinforcement-learning](https://github.com/Lumotheninja/dino-reinforcement-learning)
+更多关于Chrome Dino的彩蛋的细节，请移步：[Google blog about Chrome Dino](https://www.blog.google/products/chrome/chrome-dino/)
+
+推荐一个同主题更好的实现姿势：[Lumotheninja/dino-reinforcement-learning](https://github.com/Lumotheninja/dino-reinforcement-learning)
 
 
 
@@ -40,7 +42,7 @@
 2. 保持鼠标始终聚焦在浏览器上
 3. 运行`env/chrome_dino.py` 调整游戏图像到合适的位置
 
-在使用 2k 分辨率显示器，保持网页处于全屏状态，并使用深色 chrome 主题时可以不调整图像位置。
+在使用 2k 分辨率显示器，保持网页处于全屏状态，并使用深色 chrome 主题时，可以不调整图像位置。
 
 
 
@@ -65,21 +67,19 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 
 人工智障。
 
-运气好时，训练200轮游戏实际分数可以在500分左右。
+运气好时（50%概率），训练200轮游戏实际分数可以在500分左右。
 
 运气不好时可能根本炼不出来 QwQ。
 
-实现的不好，调参调到自闭。强化学习没前途的，快跑！
-
 <img src="/imgs/A2C_Implementation_on_Chrome_Dino_Game.png"> </img>
 
+<img src="/imgs/A2C Evaluation Performance.png"> </img>
 
 
-### TODO
 
-- 先把验收做了，再把报告写了
-- 优化 a2c_bot 的效果
-- 优化 a2c_bot 的训练稳定性
+有这点算力，为什么不挖矿呢？（逃
+
+强化学习没前途的，快跑！
 
 
 

@@ -22,7 +22,7 @@ EPSILON_END = 0.0
 EPSILON_DECAY = 100
 
 
-def a2c_main():
+def a2c_bot_chrome_dino_main(load_path=None, episode=0, n_step_cnt=0):
     env = ChromeDino()
     state_dim, action_dim = env.get_dim()
     state_dim *= 2
@@ -34,10 +34,11 @@ def a2c_main():
         actor_lr=2e-3, critic_lr=2e-3,
         critic_loss=CRITIC_LOSS, optimizer_type="rmsprop"
     )
+    if load_path is not None:
+        bot.load_model(load_path)
+
     replay_memory = ReplayMemory(MEMORY_CAPACITY)
-    episode = 0
-    n_step_cnt = 0
-    path = "./models/" + str(int(time()))
+    save_path = "./models/" + str(int(time()))
 
     print(f"time: {time()} a2c solution for chrome://dino")
     print("Game will start in 3 seconds...")
@@ -110,8 +111,8 @@ def a2c_main():
             print(f"Episode {episode}, Average Reward {round(float(rewards_mu), 2)}")
             print("=" * 100)
             file_name = f"/Episode_{episode}_Reward_{round(float(rewards_mu), 2)}"
-            makedirs(path + file_name)
-            bot.save_model(path + file_name)
+            makedirs(save_path + file_name)
+            bot.save_model(save_path + file_name)
             sleep(1)
             epsilon = EPSILON_END + (EPSILON_START - EPSILON_END) * np.exp(-1 * n_step_cnt / EPSILON_DECAY)
             print(f"Training Start... epsilon={round(epsilon, 5)}")
@@ -119,11 +120,13 @@ def a2c_main():
 
 
 if __name__ == '__main__':
-    env = ChromeDino()
-    ret = env.get_state()
+    test = ChromeDino()
+    ret = test.get_state()
     for i in range(10, 17):
         for j in range(1, 47):
             print(ret[(i - 10) * 46 + j - 1], end="")
         print()
     sleep(5)
-    a2c_main()
+    a2c_bot_chrome_dino_main()
+    # load = "./models/1615396024/Episode_380_Reward_438.8"
+    # a2c_bot_chrome_dino_main(load, episode=380, n_step_cnt=5000)

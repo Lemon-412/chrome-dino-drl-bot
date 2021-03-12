@@ -101,6 +101,8 @@ class A2CBot:
         for x, y in locals().items():
             print(f"{x} -> {y}")
         print("=" * 50)
+        self.warn_actor = True
+        self.warn_critic = True
 
     def save_model(self, path_name):
         th.save(self.actor, path_name + "/actor.pkl")
@@ -120,7 +122,7 @@ class A2CBot:
 
         # update actor network
         self.actor_optimizer.zero_grad()
-        action_log_probs = self.actor(states_var)
+        tmp = action_log_probs = self.actor(states_var)
         entropy_loss = th.mean(entropy(th.exp(action_log_probs)))
         action_log_probs = th.sum(action_log_probs * actions_var, 1)
         values = self.critic(states_var, actions_var)
@@ -129,7 +131,9 @@ class A2CBot:
         actor_loss = pg_loss - entropy_loss * self.entropy_reg
         loss[0] = float(actor_loss)
         if actor_loss != actor_loss:
-            print(f"got invalid actor loss:{actor_loss} = {pg_loss} - {entropy_loss} * {self.entropy_reg}")
+            if self.warn_actor:
+                print(f"got invalid actor loss:{actor_loss} = {pg_loss} - {entropy_loss} * {self.entropy_reg}")
+                self.warn_actor = False
             actor_loss.data = th.tensor(0.0)
         actor_loss.backward()
         if self.max_grad_norm is not None:
@@ -145,7 +149,9 @@ class A2CBot:
             critic_loss = nn.MSELoss()(values, target_values)
         loss[1] = float(critic_loss)
         if critic_loss != critic_loss:
-            print(f"got invalid critic loss:{critic_loss}")
+            if self.warn_critic:
+                print(f"got invalid critic loss:{critic_loss}")
+                self.warn_critic = False
             critic_loss.data = th.tensor(0.0)
         critic_loss.backward()
         if self.max_grad_norm is not None:

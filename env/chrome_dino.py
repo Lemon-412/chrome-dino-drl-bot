@@ -39,8 +39,12 @@ class ChromeDino:
         else:
             self.__prev_screen = screen
         ret = np.array(screen).flatten()
-        ret[ret < 60] = 0
-        ret[ret >= 60] = 1
+        if np.mean(ret) >= 60:
+            ret[ret < 196] = 1
+            ret[ret >= 196] = 0
+        else:
+            ret[ret < 60] = 0
+            ret[ret >= 60] = 1
         return ret
 
     def step(self, action):
@@ -56,9 +60,14 @@ if __name__ == '__main__':
     print("Environment test starts in 3 seconds...")
     sleep(3)
     while True:
-        ret = env.get_state()
+        cur = env.get_state()
         for i in range(10, 17):
             for j in range(1, 47):
-                print(ret[(i - 10) * 46 + j - 1], end="")
+                print(cur[(i - 10) * 46 + j - 1], end="")
             print()
         print()
+
+"""
+使小恐龙无敌：console输入
+Runner.instance_.gameOver = function(){}
+"""

@@ -1,14 +1,15 @@
-
 from bot.naive_bot import NaiveBot
 from env.chrome_dino import ChromeDino
 from time import sleep
+
+MAX_EPISODES = 50
 
 
 def naive_bot_chrome_dino_main():
     env = ChromeDino()
     bot = NaiveBot()
     sleep(3)
-    for episode in range(50):
+    for episode in range(MAX_EPISODES):
         env.reset()
         sleep(1)
         total_reward = 0

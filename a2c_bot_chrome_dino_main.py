@@ -76,8 +76,11 @@ def a2c_bot_chrome_dino_main(load_path=None, episode=0, n_step_cnt=0):
             if episode >= EPISODES_BEFORE_TRAIN:
                 batch = replay_memory.sample(BATCH_SIZE)
                 loss = bot.train(batch)
-                print(f" (remain={round(remain_value, 1)} actor_loss={round(loss[0], 3)}, critic_loss={round(loss[1], 3)}) ==> {[round(x, 1) for x in rewards]}")
-        print(f"eisode {episode} total_reward: {total_reward}\n")
+                print(f" (remain={round(remain_value, 1)}"
+                      f" actor_loss={round(loss[0], 3)}, critic_loss={round(loss[1], 3)})"
+                      f" ==> {[round(x, 1) for x in rewards]}"
+                )
+        print(f"episode {episode} total_reward: {total_reward}\n")
         # print(f"{episode % 10 if episode % 10 != 0 else episode % 100 // 10}", end="", flush=True)
         episode += 1
         if episode % EVAL_INTERVAL == 0:

@@ -3,7 +3,7 @@ from bot.a2c_bot import A2CBot
 import numpy as np
 from time import sleep
 
-MAX_EPISODES = 1000
+MAX_EPISODES = 50
 EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 5
 EVAL_INTERVAL = 10
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     bot.load_model("./models/1615433372/Episode_540_Reward_470.8")
     print(f"Evaluation Start...")
 
-    for episode in range(50):
+    for episode in range(MAX_EPISODES):
         rewards = []
         sleep(1)
         env.reset()

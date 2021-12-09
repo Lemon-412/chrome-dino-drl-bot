@@ -1,12 +1,8 @@
 # Chrome-Dino DRL Boot
-[WIP]
 
-基于 A2C 的 chrome 小恐龙彩蛋 解决方案，用于学习强化学习。
+An attempt of apllying Actor-Critic reinforcement learning algorithm for google chrome-dino game. 
 
-更多关于Chrome Dino的彩蛋的细节，请移步：[Google blog about Chrome Dino](https://www.blog.google/products/chrome/chrome-dino/)
-
-推荐一个同主题更好的实现姿势：[Lumotheninja/dino-reinforcement-learning](https://github.com/Lumotheninja/dino-reinforcement-learning)
-
+For more details about chrome dino game：[Google blog about Chrome Dino](https://www.blog.google/products/chrome/chrome-dino/)
 
 
 <img src="/imgs/dino.gif"> </img>
@@ -15,7 +11,7 @@
 
 
 
-### 项目
+### 项目 / Project
 
 项目结构：
 
@@ -32,7 +28,7 @@
 
 
 
-### 环境
+### 环境 / Environment
 
 ~~环境很屎，目前兼容性为0~~
 
@@ -54,7 +50,8 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 
 <img src="/imgs/state.png"> </img>
 
-### 难点
+
+### 难点 / Hightlights
 
 1. 在线训练，即时性要求高
 2. 输入为高维数据，需要图像处理
@@ -63,13 +60,9 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 
 
 
-### 效果
+### 效果 / Results
 
-人工智障。
-
-运气好时（50%概率），训练200轮游戏实际分数可以在500分左右。
-
-运气不好时可能根本炼不出来 QwQ。
+训练200轮游戏实际分数可以在500分左右。
 
 <img src="/imgs/A2C_Implementation_on_Chrome_Dino_Game.png"> </img>
 
@@ -77,13 +70,7 @@ env 会不断将最新的游戏截取到屏幕中，bot 决策是否按下跳跃
 
 
 
-有这点算力，为什么不挖矿呢？（逃
-
-强化学习没前途的，快跑！
-
-
-
-### 参考
+### 参考 / References
 
 Naive Bot 和 环境抓取方案参考：[guilhermej/dino_chrome_bot](https://github.com/guilhermej/dino_chrome_bot)
 

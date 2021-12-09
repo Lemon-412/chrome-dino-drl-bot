@@ -30,8 +30,6 @@ For more details about chrome dino game：[Google blog about Chrome Dino](https:
 
 ### 环境 / Environment
 
-~~环境很屎，目前兼容性为0~~
-
 因为不会前端，只能通过不断截屏 + 挟持键盘操作跳跃键实现与环境的交互。
 
 1. 使用 chrome 浏览器访问链接 [chrome://dino](chrome://dino)

@@ -8,15 +8,15 @@ EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 10
 EVAL_INTERVAL = 20
 ROLL_OUT_N_STEPS = 20
-MEMORY_CAPACITY = ROLL_OUT_N_STEPS
+MEMORY_CAPACITY = ROLL_OUT_N_STEPS * 1
 BATCH_SIZE = ROLL_OUT_N_STEPS
-REWARD_DISCOUNTED_GAMMA = 0.99
-ENTROPY_REG = 0.00
+REWARD_DISCOUNTED_GAMMA = 0.85
+ENTROPY_REG = 0.05
 DONE_PENALTY = -10.
 CRITIC_LOSS = "mse"
 MAX_GRAD_NORM = None
 EPSILON_START = 0.50
-EPSILON_END = 0.005
+EPSILON_END = 0.02
 EPSILON_DECAY = 1000
 
 
@@ -27,9 +27,9 @@ def a2c_bot_dino_simulator_main():
     bot = A2CBot(
         state_dim=state_dim, action_dim=action_dim,
         entropy_reg=ENTROPY_REG, max_grad_norm=MAX_GRAD_NORM,
-        actor_hidden_size=256, critic_hidden_size=256,
-        actor_lr=2e-3, critic_lr=2e-3,
-        critic_loss=CRITIC_LOSS, optimizer_type="rmsprop"
+        actor_hidden_size=64, critic_hidden_size=64,
+        actor_lr=2e-3, critic_lr=5e-3,
+        critic_loss=CRITIC_LOSS, optimizer_type="adam"
     )
     replay_memory = ReplayMemory(MEMORY_CAPACITY)
     episode = 0

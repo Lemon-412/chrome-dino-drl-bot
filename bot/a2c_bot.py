@@ -10,6 +10,7 @@ def identity(x):
 
 
 def entropy(p):
+    p = p + 1e-20
     return -th.sum(p * th.log(p), 1)
 
 
@@ -76,7 +77,7 @@ class A2CBot:
                  actor_hidden_size=128, critic_hidden_size=128,
                  actor_output_act=nn.functional.log_softmax, critic_loss="mse",
                  actor_lr=0.001, critic_lr=0.001,
-                 optimizer_type="rmsprop", entropy_reg=0.01,
+                 optimizer_type="adam", entropy_reg=0.01,
                  max_grad_norm=0.5):
         self.state_dim = state_dim
         self.action_dim = action_dim
@@ -130,11 +131,12 @@ class A2CBot:
         pg_loss = -th.mean(action_log_probs * advantages)
         actor_loss = pg_loss - entropy_loss * self.entropy_reg
         loss[0] = float(actor_loss)
-        if actor_loss != actor_loss:
-            if self.warn_actor:
-                print(f"got invalid actor loss:{actor_loss} = {pg_loss} - {entropy_loss} * {self.entropy_reg}")
-                self.warn_actor = False
-            actor_loss.data = th.tensor(0.0)
+        assert actor_loss == actor_loss
+        # if actor_loss != actor_loss:
+        #     if self.warn_actor:
+        #         print(f"got invalid actor loss:{actor_loss} = {pg_loss} - {entropy_loss} * {self.entropy_reg}")
+        #         self.warn_actor = False
+        #     actor_loss.data = th.tensor(0.0)
         actor_loss.backward()
         if self.max_grad_norm is not None:
             nn.utils.clip_grad_norm(self.actor.parameters(), self.max_grad_norm)
@@ -148,11 +150,12 @@ class A2CBot:
         else:
             critic_loss = nn.MSELoss()(values, target_values)
         loss[1] = float(critic_loss)
-        if critic_loss != critic_loss:
-            if self.warn_critic:
-                print(f"got invalid critic loss:{critic_loss}")
-                self.warn_critic = False
-            critic_loss.data = th.tensor(0.0)
+        assert critic_loss == critic_loss
+        # if critic_loss != critic_loss:
+        #     if self.warn_critic:
+        #         print(f"got invalid critic loss:{critic_loss}")
+        #         self.warn_critic = False
+        #     critic_loss.data = th.tensor(0.0)
         critic_loss.backward()
         if self.max_grad_norm is not None:
             nn.utils.clip_grad_norm(self.critic.parameters(), self.max_grad_norm)
